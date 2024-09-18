@@ -109,9 +109,12 @@ const App = () => {
       return;
     }
 
+    // Find the maximum rpid in the current comments and increment it for the new comment
+    const maxRpid = comments.length > 0 ? Math.max(...comments.map((c) => c.rpid)) : 0;
+
     // Create a new comment object
     const newCommentObj: Comment = {
-      rpid: comments.length > 0 ? comments[0].rpid + 1 : 1, // Generate a new rpid
+      rpid: maxRpid + 1, // Generate a new rpid
       user: user,
       content: newComment,
       ctime: new Date().toLocaleString(),
