@@ -1,45 +1,24 @@
 import './App.scss';
 import avatar from './images/bozai.png';
+import { useState } from 'react';
 
-// Comment List data
-const defaultList = [
-  {
-    rpid: 3,
-    user: {
-      uid: '13258165',
-      avatar: '',
-      uname: 'Jay Zhou',
-    },
-    content: 'Nice, well done',
-    ctime: '10-18 08:15',
-    like: 88,
-  },
-  {
-    rpid: 2,
-    user: {
-      uid: '36080105',
-      avatar: '',
-      uname: 'Song Xu',
-    },
-    content: 'I search for you thousands of times, from dawn till dusk.',
-    ctime: '11-13 11:29',
-    like: 88,
-  },
-  {
-    rpid: 1,
-    user: {
-      uid: '30009257',
-      avatar,
-      uname: 'John',
-    },
-    content: 'I told my computer I needed a break... now it will not stop sending me vacation ads.',
-    ctime: '10-19 09:00',
-    like: 66,
-  },
-];
+// Define the types for comments
+interface User {
+  uid: string;
+  avatar: string;
+  uname: string;
+}
+
+interface Comment {
+  rpid: number;
+  user: User;
+  content: string;
+  ctime: string;
+  like: number;
+}
 
 // current logged in user info
-const user = {
+const user: User = {
   uid: '30009257',
   avatar,
   uname: 'John',
@@ -52,6 +31,53 @@ const tabs = [
 ];
 
 const App = () => {
+  // Set defaultList as state to handle changes
+  const [comments, setComments] = useState<Comment[]>([
+    {
+      rpid: 3,
+      user: {
+        uid: '13258165',
+        avatar: '',
+        uname: 'Jay Zhou',
+      },
+      content: 'Nice, well done',
+      ctime: '10-18 08:15',
+      like: 88,
+    },
+    {
+      rpid: 2,
+      user: {
+        uid: '36080105',
+        avatar: '',
+        uname: 'Song Xu',
+      },
+      content: 'I search for you thousands of times, from dawn till dusk.',
+      ctime: '11-13 11:29',
+      like: 88,
+    },
+    {
+      rpid: 1,
+      user: {
+        uid: '30009257',
+        avatar,
+        uname: 'John',
+      },
+      content: 'I told my computer I needed a break... now it will not stop sending me vacation ads.',
+      ctime: '10-19 09:00',
+      like: 66,
+    },
+  ]);
+
+  // Handle delete comment
+  const handleDelete = (rpid: number, uid: string): void => {
+    // Check if the comment belongs to the current logged-in user
+    if (uid === user.uid) {
+      setComments((prevComments) => prevComments.filter((comment) => comment.rpid !== rpid));
+    } else {
+      alert('You can only delete your own comments!');
+    }
+  };
+
   return (
     <div className="app">
       {/* Nav Tab */}
@@ -59,7 +85,7 @@ const App = () => {
         <ul className="nav-bar">
           <li className="nav-title">
             <span className="nav-title-text">Comments</span>
-            <span className="total-reply">{defaultList.length}</span>
+            <span className="total-reply">{comments.length}</span>
           </li>
           <li className="nav-sort">
             <span className="nav-item">Top</span>
@@ -90,7 +116,7 @@ const App = () => {
 
         {/* comment list */}
         <div className="reply-list">
-          {defaultList.map((comment) => (
+          {comments.map((comment) => (
             <div key={comment.rpid} className="reply-item">
               <div className="root-reply-avatar">
                 <div className="bili-avatar">
@@ -115,7 +141,13 @@ const App = () => {
                     <span className="reply-time">{comment.ctime}</span>
                     {/* total likes */}
                     <span className="reply-time">Like: {comment.like}</span>
-                    <span className="delete-btn">Delete</span>
+                    <span
+                      className="delete-btn"
+                      onClick={() => handleDelete(comment.rpid, comment.user.uid)}
+                      style={{ cursor: 'pointer', color: 'red' }}
+                    >
+                      Delete
+                    </span>
                   </div>
                 </div>
               </div>
