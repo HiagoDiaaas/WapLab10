@@ -78,6 +78,14 @@ const App = () => {
     }
   };
 
+  // Active tab state
+  const [activeTab, setActiveTab] = useState<string>('hot');
+
+  // Handle tab click
+  const handleTabClick = (tabType: string) => {
+    setActiveTab(tabType);
+  };
+
   return (
     <div className="app">
       {/* Nav Tab */}
@@ -88,8 +96,17 @@ const App = () => {
             <span className="total-reply">{comments.length}</span>
           </li>
           <li className="nav-sort">
-            <span className="nav-item">Top</span>
-            <span className="nav-item">Newest</span>
+            {/* Rendering tabs and adding active class based on activeTab state */}
+            {tabs.map((tab) => (
+              <span
+                key={tab.type}
+                className={`nav-item ${activeTab === tab.type ? 'active' : ''}`}
+                onClick={() => handleTabClick(tab.type)}
+                style={{ cursor: 'pointer' }}
+              >
+                {tab.text}
+              </span>
+            ))}
           </li>
         </ul>
       </div>
