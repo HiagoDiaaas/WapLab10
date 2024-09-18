@@ -3,7 +3,7 @@ import avatar from './images/bozai.png';
 import { useState, useEffect } from 'react';
 import _ from 'lodash'; 
 
-// Define the types for comments
+
 interface User {
   uid: string;
   avatar: string;
@@ -18,7 +18,7 @@ interface Comment {
   like: number;
 }
 
-// current logged in user info
+
 const user: User = {
   uid: '30009257',
   avatar,
@@ -32,7 +32,6 @@ const tabs = [
 ];
 
 const App = () => {
-  // Set defaultList as state to handle changes
   const [comments, setComments] = useState<Comment[]>([
     {
       rpid: 3,
@@ -69,9 +68,7 @@ const App = () => {
     },
   ]);
 
-  // Handle delete comment
   const handleDelete = (rpid: number, uid: string): void => {
-    // Check if the comment belongs to the current logged-in user
     if (uid === user.uid) {
       setComments((prevComments) => prevComments.filter((comment) => comment.rpid !== rpid));
     } else {
@@ -79,56 +76,44 @@ const App = () => {
     }
   };
 
-  // Active tab state
   const [activeTab, setActiveTab] = useState<string>('hot');
   const [sortedComments, setSortedComments] = useState<Comment[]>(comments);
 
-  // Sorting logic using lodash
+
   useEffect(() => {
     if (activeTab === 'hot') {
-      // Sort by likes in descending order when 'Top' is active
       setSortedComments(_.orderBy(comments, ['like'], ['desc']));
     } else if (activeTab === 'newest') {
-      // Sort by date in descending order when 'Newest' is active
       setSortedComments(_.orderBy(comments, ['ctime'], ['desc']));
     }
   }, [activeTab, comments]);
 
-  // Handle tab click
+
   const handleTabClick = (tabType: string) => {
     setActiveTab(tabType);
   };
 
-  // State for new comment input
   const [newComment, setNewComment] = useState<string>('');
 
-  // Handle new comment submission
   const handlePostComment = () => {
     if (newComment.trim() === '') {
       alert('Please enter a comment.');
       return;
     }
 
-    // Find the maximum rpid in the current comments and increment it for the new comment
-    const maxRpid = comments.length > 0 ? Math.max(...comments.map((c) => c.rpid)) : 0;
-
-    // Create a new comment object
     const newCommentObj: Comment = {
-      rpid: maxRpid + 1, // Generate a new rpid
+      rpid: comments.length > 0 ? comments[0].rpid + 1 : 1,
       user: user,
       content: newComment,
       ctime: new Date().toLocaleString(),
       like: 0,
     };
 
-    // Add the new comment to the comments state
     const updatedComments = [newCommentObj, ...comments];
     setComments(updatedComments);
 
-    // Clear the textarea
     setNewComment('');
 
-    // Re-sort the comments after adding the new one
     if (activeTab === 'hot') {
       setSortedComments(_.orderBy(updatedComments, ['like'], ['desc']));
     } else {
