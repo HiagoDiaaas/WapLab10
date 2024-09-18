@@ -1,6 +1,7 @@
 import './App.scss';
 import avatar from './images/bozai.png';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import _ from 'lodash'; 
 
 // Define the types for comments
 interface User {
@@ -80,6 +81,18 @@ const App = () => {
 
   // Active tab state
   const [activeTab, setActiveTab] = useState<string>('hot');
+  const [sortedComments, setSortedComments] = useState<Comment[]>(comments);
+
+  // Sorting logic using lodash
+  useEffect(() => {
+    if (activeTab === 'hot') {
+      // Sort by likes in descending order when 'Top' is active
+      setSortedComments(_.orderBy(comments, ['like'], ['desc']));
+    } else if (activeTab === 'newest') {
+      // Sort by date in descending order when 'Newest' is active
+      setSortedComments(_.orderBy(comments, ['ctime'], ['desc']));
+    }
+  }, [activeTab, comments]);
 
   // Handle tab click
   const handleTabClick = (tabType: string) => {
@@ -93,7 +106,7 @@ const App = () => {
         <ul className="nav-bar">
           <li className="nav-title">
             <span className="nav-title-text">Comments</span>
-            <span className="total-reply">{comments.length}</span>
+            <span className="total-reply">{sortedComments.length}</span>
           </li>
           <li className="nav-sort">
             {/* Rendering tabs and adding active class based on activeTab state */}
@@ -133,7 +146,7 @@ const App = () => {
 
         {/* comment list */}
         <div className="reply-list">
-          {comments.map((comment) => (
+          {sortedComments.map((comment) => (
             <div key={comment.rpid} className="reply-item">
               <div className="root-reply-avatar">
                 <div className="bili-avatar">
