@@ -99,6 +99,40 @@ const App = () => {
     setActiveTab(tabType);
   };
 
+  // State for new comment input
+  const [newComment, setNewComment] = useState<string>('');
+
+  // Handle new comment submission
+  const handlePostComment = () => {
+    if (newComment.trim() === '') {
+      alert('Please enter a comment.');
+      return;
+    }
+
+    // Create a new comment object
+    const newCommentObj: Comment = {
+      rpid: comments.length > 0 ? comments[0].rpid + 1 : 1, // Generate a new rpid
+      user: user,
+      content: newComment,
+      ctime: new Date().toLocaleString(),
+      like: 0,
+    };
+
+    // Add the new comment to the comments state
+    const updatedComments = [newCommentObj, ...comments];
+    setComments(updatedComments);
+
+    // Clear the textarea
+    setNewComment('');
+
+    // Re-sort the comments after adding the new one
+    if (activeTab === 'hot') {
+      setSortedComments(_.orderBy(updatedComments, ['like'], ['desc']));
+    } else {
+      setSortedComments(_.orderBy(updatedComments, ['ctime'], ['desc']));
+    }
+  };
+
   return (
     <div className="app">
       {/* Nav Tab */}
@@ -136,10 +170,18 @@ const App = () => {
           <div className="reply-box-wrap">
             <textarea
               className="reply-box-textarea"
-              placeholder="tell something..."
+              placeholder="Tell something..."
+              value={newComment}
+              onChange={(e) => setNewComment(e.target.value)}
             />
             <div className="reply-box-send">
-              <div className="send-text">Post</div>
+              <div
+                className="send-text"
+                onClick={handlePostComment}
+                style={{ cursor: 'pointer' }}
+              >
+                Post
+              </div>
             </div>
           </div>
         </div>
