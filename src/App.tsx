@@ -31,46 +31,21 @@ const tabs = [
 
 const App = () => {
   // Initialize comments state
-  const [comments, setComments] = useState<Comment[]>([
-    {
-      rpid: 3,
-      user: {
-        uid: '13258165',
-        avatar: '',
-        uname: 'Jay Zhou',
-      },
-      content: 'Nice, well done',
-      ctime: '10-18 08:15',
-      like: 88,
-    },
-    {
-      rpid: 2,
-      user: {
-        uid: '36080105',
-        avatar: '',
-        uname: 'Song Xu',
-      },
-      content: 'I search for you thousands of times, from dawn till dusk.',
-      ctime: '11-13 11:29',
-      like: 88,
-    },
-    {
-      rpid: 1,
-      user: {
-        uid: '30009257',
-        avatar,
-        uname: 'John',
-      },
-      content: 'I told my computer I needed a break... now it will not stop sending me vacation ads.',
-      ctime: '10-19 09:00',
-      like: 66,
-    },
-  ]);
-
+  const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState<string>(''); 
   const [activeTab, setActiveTab] = useState<string>('hot'); 
   const [sortedComments, setSortedComments] = useState<Comment[]>([]); 
 
+  useEffect(() => {
+    // Fetch comments from API
+    const getList = async () => {
+      const res = await fetch('http://localhost:3004/comments');
+      const data = await res.json();
+      setComments(data); // Set comments with data fetched from the API
+    };
+    
+    getList();
+  }, []); // Runs once when the component is mounted
 
   useEffect(() => {
     console.log('Active tab:', activeTab);
