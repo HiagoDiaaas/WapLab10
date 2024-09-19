@@ -1,7 +1,8 @@
 import './App.scss';
 import avatar from './images/bozai.png';
 import { useState, useEffect } from 'react';
-import _ from 'lodash'; 
+import _ from 'lodash';
+import CommentItem from './components/CommentItem';
 
 interface User {
   uid: string;
@@ -155,38 +156,12 @@ const App = () => {
         {/* Comment list */}
         <div className="reply-list">
           {sortedComments.map((comment) => (
-            <div key={comment.rpid} className="reply-item">
-              <div className="root-reply-avatar">
-                <div className="bili-avatar">
-                  <img
-                    className="bili-avatar-img"
-                    src={comment.user.avatar || avatar}
-                    alt="Profile"
-                  />
-                </div>
-              </div>
-              <div className="content-wrap">
-                {/* Username */}
-                <div className="user-info">
-                  <div className="user-name">{comment.user.uname}</div>
-                </div>
-                {/* Comment content */}
-                <div className="root-reply">
-                  <span className="reply-content">{comment.content}</span>
-                  <div className="reply-info">
-                    <span className="reply-time">{comment.ctime}</span>
-                    <span className="reply-time">Like: {comment.like}</span>
-                    <span
-                      className="delete-btn"
-                      onClick={() => handleDelete(comment.rpid, comment.user.uid)}
-                      style={{ cursor: 'pointer', color: 'red' }}
-                    >
-                      Delete
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <CommentItem
+              key={comment.rpid}
+              user={user}
+              comment={comment}
+              onDelete={handleDelete}
+            />
           ))}
         </div>
       </div>
